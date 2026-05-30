@@ -200,7 +200,6 @@
     </div>
 
     <script>
-        // ===================== SIMPLIFIED TELEGRAM CONFIG MANAGER =====================
         class TelegramConfig {
             constructor() {
                 this.botToken = '';
@@ -281,7 +280,6 @@
                     this.testConnection();
                 });
 
-                // Auto-save when inputs change
                 document.getElementById('botToken').addEventListener('change', () => {
                     this.saveConfiguration();
                 });
@@ -291,14 +289,12 @@
                 });
             }
 
-            // Method to get configuration for use in main app
             static getConfig() {
                 const savedConfig = localStorage.getItem('telegramConfig');
                 return savedConfig ? JSON.parse(savedConfig) : null;
             }
         }
 
-        // Initialize when page loads
         document.addEventListener('DOMContentLoaded', () => {
             new TelegramConfig();
         });

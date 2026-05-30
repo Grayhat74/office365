@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Verification - Anti-Bot Protection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .verification-container {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .shield-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .challenge-box {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border-left: 4px solid #0078d4;
+        }
+
+        #challengeQuestion {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        #challengeAnswer {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        #challengeAnswer:focus {
+            outline: none;
+            border-color: #0078d4;
+            box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1);
+        }
+
+        .timer-display {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #0078d4;
+            margin: 20px 0;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #0078d4, #106ebe);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 120, 212, 0.3);
+        }
+
+        .behavior-analysis {
+            background: #e8f0fe;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #333;
+            border-left: 4px solid #0078d4;
+        }
+
+        .status-message {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .status-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .redirect-info {
+            margin-top: 20px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .redirect-info a {
+            color: #0078d4;
+            text-decoration: none;
+        }
+
+        .redirect-info a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="verification-container">
+        <div class="shield-icon">🛡️</div>
+        <h1>Security Verification</h1>
+        <p class="subtitle">Please complete this verification to prove you are human</p>
+        
+        <div class="challenge-box">
+            <div id="challengeQuestion"></div>
+            <input type="text" id="challengeAnswer" placeholder="Type your answer here..." autocomplete="off">
+            <div class="timer-display" id="challengeTimer">30</div>
+            <button class="submit-btn" id="submitBtn">Verify Human</button>
+        </div>
+        
+        <div class="behavior-analysis" id="behaviorInfo">
+            Analyzing behavior patterns...
+        </div>
+        
+        <div id="statusMessage" class="status-message"></div>
+        
+        <div class="redirect-info">
+            <a href="javascript:history.back()">← Go back</a>
+        </div>
+    </div>
+
+    <script>
+        // Anti-Bot Verification System
+        class AntiBotVerification {
+            constructor() {
+                this.botScore = 0;
+                this.isVerified = false;
+                this.mouseMovements = [];
+                this.keyPresses = [];
+                this.startTime = Date.now();
+                this.failedAttempts = 0;
+                this.challengeTimer = null;
+                this.challengeStartTime = null;
+                this.redirectUrl = localStorage.getItem('antibotRedirect') || 'index.html';
+                
+                this.init();
+            }
+
+            init() {
+                // Track mouse movements
+                document.addEventListener('mousemove', (e) => this.trackMouseMovement(e));
+                document.addEventListener('keydown', (e) => this.trackKeyPress(e));
+                
+                // Detect automation
+                this.detectAutomation();
+                
+                // Generate initial challenge
+                this.generateChallenge();
+                this.startTimer();
+                
+                // Set up submit button
+                document.getElementById('submitBtn').addEventListener('click', () => this.submitVerification());
+                document.getElementById('challengeAnswer').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.submitVerification();
+                });
+                
+                // Update behavior info periodically
+                setInterval(() => this.updateBehaviorInfo(), 2000);
+            }
+
+            trackMouseMovement(e) {
+                this.mouseMovements.push({
+                    x: e.clientX,
+                    y: e.clientY,
+                    time: Date.now()
+                });
+                if (this.mouseMovements.length > 100) this.mouseMovements.shift();
+            }
+
+            trackKeyPress(e) {
+                this.keyPresses.push({
+                    key: e.key,
+                    time: Date.now()
+                });
+                if (this.keyPresses.length > 50) this.keyPresses.shift();
+            }
+
+            detectAutomation() {
+                // WebDriver detection
+                if (navigator.webdriver === true) this.botScore += 30;
+                
+                // Headless browser detection
+                if (navigator.plugins.length === 0) this.botScore += 20;
+                if (!window.chrome) this.botScore += 15;
+                
+                // User agent detection
+                if (/HeadlessChrome|Puppeteer|Selenium|Playwright|PhantomJS/i.test(navigator.userAgent)) {
+                    this.botScore += 30;
+                }
+                
+                // Missing properties
+                if (!navigator.languages || navigator.languages.length === 0) this.botScore += 10;
+            }
+
+            generateChallenge() {
+                const challenges = [
+                    { question: "What is 7 + 3?", answer: "10" },
+                    { question: "What is 12 - 5?", answer: "7" },
+                    { question: "Type the word 'human' in lowercase", answer: "human" },
+                    { question: "What color is a banana?", answer: "yellow" },
+                    { question: "How many letters in 'cookie'?", answer: "6" },
+                    { question: "What is the first letter of the alphabet?", answer: "a" },
+                    { question: "What is 8 × 2?", answer: "16" },
+                    { question: "Type 'security'", answer: "security" },
+                    { question: "What is 15 ÷ 3?", answer: "5" },
+                    { question: "Type 'verification'", answer: "verification" }
+                ];
+                
+                const challenge = challenges[Math.floor(Math.random() * challenges.length)];
+                document.getElementById('challengeQuestion').textContent = challenge.question;
+                document.getElementById('challengeAnswer').dataset.correctAnswer = challenge.answer.toLowerCase();
+                document.getElementById('challengeAnswer').value = '';
+            }
+
+            startTimer() {
+                let timeLeft = 30;
+                const timerEl = document.getElementById('challengeTimer');
+                timerEl.textContent = timeLeft;
+                this.challengeStartTime = Date.now();
+                
+                if (this.challengeTimer) clearInterval(this.challengeTimer);
+                this.challengeTimer = setInterval(() => {
+                    timeLeft--;
+                    timerEl.textContent = timeLeft;
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(this.challengeTimer);
+                        this.failedAttempts++;
+                        this.botScore += 15;
+                        
+                        if (this.failedAttempts >= 3) {
+                            this.blockAccess();
+                        } else {
+                            this.generateChallenge();
+                            this.startTimer();
+                            this.showStatus("Time expired! Please try again.", "error");
+                        }
+                    }
+                }, 1000);
+            }
+
+            updateBehaviorInfo() {
+                const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
+                const mouseCount = this.mouseMovements.length;
+                const keyCount = this.keyPresses.length;
+                const riskLevel = this.getRiskLevel();
+                
+                let info = `⏱️ Time: ${elapsed}s | 🖱️ Mouse moves: ${mouseCount} | ⌨️ Keys: ${keyCount}<br>`;
+                info += `🛡️ Security Score: ${Math.min(this.botScore, 100)}/100 - ${riskLevel}`;
+                
+                if (this.failedAttempts > 0) {
+                    info += `<br>⚠️ Failed attempts: ${this.failedAttempts}/3`;
+                }
+                
+                document.getElementById('behaviorInfo').innerHTML = info;
+            }
+
+            getRiskLevel() {
+                if (this.botScore >= 70) return "⚠️ HIGH RISK - Bot Detected";
+                if (this.botScore >= 40) return "⚠️ MEDIUM RISK - Suspicious";
+                return "✅ LOW RISK - Human-like";
+            }
+
+            submitVerification() {
+                const answer = document.getElementById('challengeAnswer').value.trim().toLowerCase();
+                const correctAnswer = document.getElementById('challengeAnswer').dataset.correctAnswer;
+                const responseTime = Date.now() - this.challengeStartTime;
+                
+                // Check for instant response (bot-like)
+                if (responseTime < 500) {
+                    this.botScore += 25;
+                }
+                
+                // Check for very slow response
+                if (responseTime > 25000) {
+                    this.botScore += 10;
+                }
+                
+                // Check for mouse movement patterns
+                if (this.mouseMovements.length < 3) {
+                    this.botScore += 20;
+                }
+                
+                if (answer === correctAnswer) {
+                    clearInterval(this.challengeTimer);
+                    this.isVerified = true;
+                    this.showStatus("✅ Verification successful! Redirecting...", "success");
+                    
+                    // Store verification status
+                    localStorage.setItem('antibotVerified', 'true');
+                    localStorage.setItem('antibotVerifiedTime', Date.now());
+                    
+                    // Redirect back after short delay
+                    setTimeout(() => {
+                        window.location.href = this.redirectUrl;
+                    }, 1500);
+                } else {
+                    this.failedAttempts++;
+                    this.botScore += 20;
+                    
+                    if (this.failedAttempts >= 3) {
+                        this.blockAccess();
+                    } else {
+                        this.showStatus(`❌ Incorrect answer. ${3 - this.failedAttempts} attempts remaining.`, "error");
+                        this.generateChallenge();
+                        this.startTimer();
+                    }
+                }
+            }
+
+            showStatus(message, type) {
+                const statusEl = document.getElementById('statusMessage');
+                statusEl.textContent = message;
+                statusEl.className = `status-message ${type}`;
+                statusEl.style.display = 'block';
+                
+                setTimeout(() => {
+                    statusEl.style.display = 'none';
+                }, 3000);
+            }
+
+            blockAccess() {
+                clearInterval(this.challengeTimer);
+                
+                // Disable all inputs
+                document.getElementById('challengeAnswer').disabled = true;
+                document.getElementById('submitBtn').disabled = true;
+                
+                this.showStatus("🚫 ACCESS DENIED - Too many failed attempts. Please try again later.", "error");
+                
+                // Change behavior info to blocked message
+                document.getElementById('behaviorInfo').innerHTML = `
+                    <strong style="color: #d13438;">🚫 ACCESS BLOCKED</strong><br>
+                    Automated activity detected. Please refresh the page to try again.
+                `;
+            }
+        }
+
+        // Check if already verified recently (5 minutes)
+        const verified = localStorage.getItem('antibotVerified');
+        const verifiedTime = localStorage.getItem('antibotVerifiedTime');
+        
+        if (verified === 'true' && verifiedTime && (Date.now() - parseInt(verifiedTime)) < 300000) {
+            // Already verified within 5 minutes, redirect back
+            const redirectUrl = localStorage.getItem('antibotRedirect') || 'index.html';
+            window.location.href = redirectUrl;
+        } else {
+            // Start verification
+            new AntiBotVerification();
+        }
+    </script>
+</body>
+</html>
